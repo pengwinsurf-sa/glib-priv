@@ -102,8 +102,8 @@ jobs:
 
       - name: Set CFLAGS and CXXFLAGS
         run: |
-          echo "CFLAGS=--coverage -ftest-coverage -fprofile-arcs -fprofile-update=atomic" | sudo tee -a /etc/environment
-          echo "CXXFLAGS=--coverage -ftest-coverage -fprofile-arcs -fprofile-update=atomic" | sudo tee -a /etc/environment
+          export CFLAGS="--coverage -ftest-coverage -fprofile-arcs -fprofile-update=atomic"
+          export CXXFLAGS="--coverage -ftest-coverage -fprofile-arcs -fprofile-update=atomic"
 
       - name: Build
         run: |
@@ -126,6 +126,10 @@ jobs:
       - name: Compile
         run: |
           meson compile -C _build
+
+      - name: Install
+        run: |
+          meson install -C _build
 
       - name: Create coverage directory
         run: |
