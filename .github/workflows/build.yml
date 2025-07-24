@@ -92,10 +92,13 @@ jobs:
       - name: Install meson
         run: |
           sudo pip3 install meson==1.4.2
-      - name: Run cache-subprojects.sh
+      - name: Prepare subprojects
         run: |
-          chmod +x cache-subprojects.sh || true
-          ./cache-subprojects.sh || true 
+          git -C glib submodule update --init
+          meson subprojects download --sourcedir glib
+          rm glib/subprojects/*.wrap
+          mv glib/subprojects/ .
+          rm -rf glib
 
       - name: Set CFLAGS and CXXFLAGS
         run: |
