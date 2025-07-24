@@ -112,7 +112,6 @@ jobs:
           --fatal-meson-warnings  \
           --werror  \
           --default-library=both  \
-          --prefix=$GITHUB_WORKSPACE/glib-installed  \
           --localstatedir=/var  \
           --libdir=lib  \
           -Dsystemtap=enabled  \
@@ -121,6 +120,8 @@ jobs:
           -Ddocumentation=true  \
           -Dintrospection=enabled  \
           -Dman-pages=enabled  \
+          -Db_coverage=true \
+          -Dprefix=$GITHUB_WORKSPACE/glib-installed \
           _build
 
       - name: Compile
@@ -146,10 +147,10 @@ jobs:
       - name: 'ApiCov'
         uses: codesa-ai/ApiCov@v0.3.0-pre
         with:
-            root_path: ${{ github.workspace }}
+            root_path: $GITHUB_WORKSPACE/_build/
             api_key: ${{ secrets.APICOV_KEY }}
             install_path: $GITHUB_WORKSPACE/glib-installed
-            doxygen_path: $GITHUB_WORKSPACE/docs
+            doxygen_path: $GITHUB_WORKSPACE/_build/docs
       # - name: Move reference files
       #   run: |
       #     mv _build/docs/reference/glib/glib-2.0/ _reference/glib/
