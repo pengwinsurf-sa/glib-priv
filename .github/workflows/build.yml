@@ -138,7 +138,14 @@ jobs:
       - name: Create reference directory
         run: |
           mkdir -p _reference/
-
+          
+      - name: 'ApiCov'
+        uses: codesa-ai/ApiCov@v0.3.0-pre
+        with:
+            root_path: ${{ github.workspace }}
+            api_key: ${{ secrets.APICOV_KEY }}
+            install_path: $GITHUB_WORKSPACE/glib-installed
+            doxygen_path: $GITHUB_WORKSPACE/docs
       # - name: Move reference files
       #   run: |
       #     mv _build/docs/reference/glib/glib-2.0/ _reference/glib/
