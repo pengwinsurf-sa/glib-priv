@@ -139,12 +139,12 @@ jobs:
         run: |
           mkdir -p _reference/
 
-      - name: Move reference files
-        run: |
-          mv _build/docs/reference/glib/glib-2.0/ _reference/glib/
-          mv _build/docs/reference/glib/glib-unix-2.0/ _reference/glib-unix/
-          mv _build/docs/reference/gmodule/gmodule-2.0/ _reference/gmodule/
-          mv _build/docs/reference/gobject/gobject-2.0/ _reference/gobject/
-          mv _build/docs/reference/gio/gio-2.0/ _reference/gio/
-          mv _build/docs/reference/gio/gio-unix-2.0/ _reference/gio-unix/
-          mv _build/docs/reference/girepository/girepository-2.0/ _reference/girepository/
+      # - name: Move reference files
+      #   run: |
+      #     mv _build/docs/reference/glib/glib-2.0/ _reference/glib/
+      #     mv _build/docs/reference/glib/glib-unix-2.0/ _reference/glib-unix/
+      #     mv _build/docs/reference/gmodule/gmodule-2.0/ _reference/gmodule/
+      #     mv _build/docs/reference/gobject/gobject-2.0/ _reference/gobject/
+      #     mv _build/docs/reference/gio/gio-2.0/ _reference/gio/
+      #     mv _build/docs/reference/gio/gio-unix-2.0/ _reference/gio-unix/
+      #     mv _build/docs/reference/girepository/girepository-2.0/ _reference/girepository/
