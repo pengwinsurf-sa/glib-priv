@@ -65,6 +65,7 @@ jobs:
             xz-utils \
             zlib1g-dev
           sudo rm -rf /usr/share/doc/* /usr/share/man/*
+      
       - name: Generate locales for build
         run: |
           sudo locale-gen C.UTF-8
@@ -92,6 +93,8 @@ jobs:
       - name: Install meson
         run: |
           sudo pip3 install meson==1.4.2
+      - name: Install rst2man
+        run: sudo apt-get install -y python3-docutils
       - name: Prepare subprojects
         run: |
           git submodule update --init
