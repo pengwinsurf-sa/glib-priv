@@ -104,20 +104,21 @@ jobs:
 
       - name: Build
         run: |
-          meson setup --buildtype debug 
-          --wrap-mode=nodownload 
-          --fatal-meson-warnings 
-          --werror 
-          --default-library=both 
-          --prefix=$GITHUB_WORKSPACE/glib-installed 
-          --localstatedir=/var 
-          --libdir=lib 
-          -Dsystemtap=enabled 
-          -Ddtrace=enabled 
-          -Dinstalled_tests=true 
-          -Ddocumentation=true 
-          -Dintrospection=enabled 
-          -Dman-pages=enabled _build
+          meson setup --buildtype debug  \
+          --wrap-mode=nodownload  \
+          --fatal-meson-warnings  \
+          --werror  \
+          --default-library=both  \
+          --prefix=$GITHUB_WORKSPACE/glib-installed  \
+          --localstatedir=/var  \
+          --libdir=lib  \
+          -Dsystemtap=enabled  \
+          -Ddtrace=enabled  \
+          -Dinstalled_tests=true  \
+          -Ddocumentation=true  \
+          -Dintrospection=enabled  \
+          -Dman-pages=enabled  \
+          _build
 
       - name: Compile
         run: |
