@@ -96,7 +96,6 @@ jobs:
         run: |
           git submodule update --init
           meson subprojects download --sourcedir .
-          mv subprojects/* .
 
       - name: Set CFLAGS and CXXFLAGS
         run: |
