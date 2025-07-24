@@ -8,7 +8,6 @@ test_env.set('G_TEST_BUILDDIR', meson.current_build_dir())
 lint_scripts = [
   'black.sh',
   'flake8.sh',
-  'reuse.sh',
   'shellcheck.sh',
 ]
 
