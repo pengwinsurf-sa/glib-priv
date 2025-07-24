@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  style-check:
+    name: Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install style check dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck python3-pip
+          pip install black flake8
+      - name: Run shellcheck
+        run: tests/shellcheck.sh
+      - name: Run black
+        run: tests/black.sh
+      - name: Run flake8
+        run: tests/flake8.sh
+
+  build:
+    name: Build (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [fedora:39, debian:stable]
+    container:
+      image: ${{ matrix.image }}
+    env:
+      MESON_COMMON_OPTIONS: --buildtype debug --wrap-mode=nodownload --fatal-meson-warnings
+      GOBJECT_INTROSPECTION_TAG: 1.80.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies (Fedora)
+        if: matrix.image == 'fedora:39'
+        run: |
+          dnf install -y meson ninja-build gcc gcc-c++ lcov git gobject-introspection-devel
+      - name: Install dependencies (Debian)
+        if: matrix.image == 'debian:stable'
+        run: |
+          apt-get update
+          apt-get install -y meson ninja-build gcc g++ lcov git pkg-config gobject-introspection
+      - name: Meson setup
+        run: |
+          meson setup $MESON_COMMON_OPTIONS --werror --default-library=both --prefix=$HOME/glib-installed --localstatedir=/var --libdir=lib -Dsystemtap=enabled -Ddtrace=enabled -Dinstalled_tests=true -Ddocumentation=true -Dintrospection=enabled -Dman-pages=enabled _build
+      - name: Meson compile
+        run: meson compile -C _build
+      - name: Run tests
+        run: .gitlab-ci/run-tests.sh
+      - name: Upload build logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: meson-logs-${{ matrix.image }}
+          path: _build/meson-logs/
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    needs: build
+    container:
+      image: fedora:39
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          dnf install -y lcov
+      - name: Run coverage script
+        run: bash -x ./.gitlab-ci/coverage-docker.sh
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: _coverage/
+
+  scan-build:
+    name: Static Analysis (scan-build)
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:39
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install scan-build
+        run: |
+          dnf install -y clang-analyzer meson ninja-build gcc gcc-c++
+      - name: Meson setup for scan-build
+        run: |
+          meson setup $MESON_COMMON_OPTIONS --werror --default-library=both --prefix=$HOME/glib-installed --localstatedir=/var --libdir=lib -Dglib_debug=enabled -Dsystemtap=enabled -Ddtrace=enabled -Dinstalled_tests=true -Dintrospection=enabled _scan_build
+      - name: Run scan-build
+        run: |
+          ninja -C _scan_build scan-build || true
+      - name: Upload scan-build logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: scanbuild-logs
+          path: _scan_build/meson-logs/scanbuild 
